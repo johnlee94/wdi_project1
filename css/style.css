@@ -1,0 +1,109 @@
+/*body {
+  background-image: url(../images/background.jpg);
+}*/
+
+#mainheader {
+  text-align: center;
+  color: white;
+}
+
+#mgw {
+  height: 500px;
+  width: 900px;
+  border: 10px solid black;
+  margin: 0 auto;
+}
+
+#log {
+  text-align: left;
+  background-color: black;
+  height: 150px;
+  width: 888px;
+  border: 1px solid black;
+  margin: 25px auto;
+  padding: 15px;
+  font-size: 15px;
+  margin-top: 0px;
+  }
+
+#pt {
+  width: 900px;
+  height: 30px;
+  margin: 25px auto;
+  font-size: 20px;
+  display: block;
+  border: black solid 5px;
+  color: rgb(0, 255, 0)
+  font-family: 'Source Code Pro', monospace;
+  background-color: black;
+}
+
+#power {
+  /*how to auto adjust to fit above bottom div screen?*/
+  text-align: left;
+  height: 30px;
+  width: 900px;
+  font-size: 20px;
+  margin: 0 auto;
+  margin-bottom: 0px;
+  padding: 0px;
+}
+
+/*form {
+  display:block;
+  margin-left: 160px;
+}*/
+
+body {
+  background-image: url(../images/black_gradient.jpg)
+}
+
+#pt, #log, #mgw, #power {
+  font-family: 'Source Code Pro', monospace;
+  /*FOR RPG FONT STYLE (NOT THAT FONT SIZE IS LARGER)
+  font-family: 'Press Start 2P', cursive;*/
+  color: rgb(0, 255, 0)
+}
+
+
+.homescreen {
+  background-image: url(../images/logo.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: black;
+}
+
+.noSource {
+  background-image: url(../images/no_source.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bedroomChange1 {
+  background-image: url(../images/bedroom_change.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bedroomChance1 {
+  background-image: url(../images/bedroom_chance.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bathroom1 {
+  background-image: url(../images/bathroom1.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bedroomCheer1 {
+  background-image: url(../images/bedroom_cheer.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
