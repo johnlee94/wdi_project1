@@ -12,6 +12,7 @@
   width: 900px;
   border: 10px solid black;
   margin: 0 auto;
+  background-color: black;
 }
 
 #log {
@@ -103,6 +104,13 @@ body {
 
 .bedroomCheer1 {
   background-image: url(../images/bedroom_cheer.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.lab1 {
+  background-image: url(../images/lab_1.jpg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
