@@ -1,7 +1,7 @@
 console.log("PROJECT ONE LEGGO")
-$('#audioMain').autoplay;
 
-$('#log').text("Welcome to Beacon Mental Asylum! Congratulations on being hired to work in our night shift team! We have recently implemented state of the art technology so that you can control everything on this floor via the terminal! Please keep in mind that the technology is still in its experimental stages..but everything should be working properly. Have a wonderful evening! Login to continue as employee. Else, type .continue and press enter to login as guest.")
+
+$('#log').text("Welcome to Beacon Mental Asylum! Congratulations on being hired to work in our night shift team! We have recently implemented state of the art technology so that you can control everything on this floor via the terminal! Please keep in mind that the technology is still in its experimental stages..but everything should be working properly. Have a wonderful evening! Use .login to login to continue as an employee. Else, type 'login as guest' and press enter to login as guest.")
 
 $('#pt').on("keydown", initialScreen)
 
@@ -13,10 +13,31 @@ function initialScreen(event) {
         console.log(x)
         event.preventDefault();
     }
-    if (x === ".continue") {
+    if (x === "login as guest") {
         $('#log').text("Welcome to Beacon Mental Asylum! You are in the main control room's accessing terminal. Have a wonderful evening!" + '\n' + "Type .help in the command line and hit enter at any time if you need guidance on using this terminal.")
         $('#pt').off('keydown', initialScreen)
         $('#pt').on('keydown', clearOnReturn)
+    } else if (x === ".login") {
+        $('#log').text("Username?")
+        $('#pt').off('keydown', initialScreen)
+        $('#pt').on('keydown', fakeLogin)
+
+        function fakeLogin(event) {
+            if (event.keyCode === 13) {
+                var z = $('#pt').val()
+                $('#pt').val('')
+                event.preventDefault()
+                if (z !== "Dr. Seuss") {
+                    $('#log').text("Invalid username. Try again with command .login. Or, type 'login as guest' to continue as user guest.")
+                    $('#pt').off('keydown', fakeLogin)
+                    $('#pt').on('keydown', initialScreen)
+                } else if (z === "Dr. Seuss") {
+                    $('#log').text("You've already beaten this game. CONGRATS NERD. Adding features for post-game content in the future! For now, feel free to replay as guest.. 'login as guest'")
+                    $('#pt').off('keydown', fakeLogin)
+                    $('#pt').on('keydown', initialScreen)
+                }
+            }
+        }
     }
 }
 
@@ -59,6 +80,10 @@ var cam8Count = 0;
 var warning10 = false;
 var x;
 var playMusic = 0;
+var finalChecker = 0;
+var labTracker = 0;
+var electrifier = 0;
+var cameraTracker;
 
 $('#power').text("Power: " + Math.round(power) + "%")
 
@@ -88,24 +113,28 @@ function clearOnReturn(event) {
         powerZero();
         //another glitch, at end of game, when power is supposed to be zero, it can be negative, because it is zero when powerZero is called but then it loses a couple more percentage points.. ie Power = -2%.
         if (x === '.help') {
+            cameraTracker = 'off';
             $('div#mgw').removeClass()
             $('#mgw').text('')
             $('div#mgw').addClass('homescreen')
             //view help menu
             $('#log').text('HELP COMMAND--' + "\n" + "use '.' + 'command', to initiate specific command; i.e. '.list' for a list of commands.. '.esc' will return you to the main terminal window.")
         } else if (x === '.list') {
+            cameraTracker = 'off';
             $('div#mgw').removeClass()
             $('#mgw').text('')
             $('div#mgw').addClass('homescreen')
             //view list of commands
-            $('#log').text("LIST OF COMMANDS-- .esc, .help, .map, .cam, .devNotes, .cam1, .cam2, .cam3, .cam4, .cam5, .cam6, .cam7, .cam8, .lock, .unlock, .open, .close, .login, .music");
+            $('#log').text("LIST OF COMMANDS-- .esc, .help, .map, .reboot, .devNotes, .cam, .cam1, .cam2, .cam3, .cam4, .cam5, .cam6, .cam7, .cam8, .lock, .unlock, .open, .close, .login, .music, .electrifier");
         } else if (x === '.map') {
+            cameraTracker = 'off';
             $('#mgw').text('')
             //code to open map
             $('#log').text("CURRENT DIRECTORY: MAP");
 
             power -= .5;
         } else if (x === '.cam') {
+            cameraTracker = 'off';
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
             $('#mgw').text('')
@@ -114,17 +143,30 @@ function clearOnReturn(event) {
 
             power -= .5;
         } else if (x === '.cam1') {
-            cam1Count++
-            power -= 1;
-            if (playMusic === 0) {
+            if (cameraTracker !== 1) {
+                setTimeout(tracker1, 500)
+
+                function tracker1() {
+                    cameraTracker = 1;
+                }
+                cam1Count++
+                power -= 1;
+            }
+            if (playMusic === 0 && cameraTracker !== 1) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('noSource')
                 $('#mgw').text('')
                 $('#log').text("CURRENT DIRECTORY: BEDROOM: 'CHEER'");
-            } else if (playMusic === 1 && cam1Count <= 5) {
+            } else if (playMusic === 0) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('noSource')
+                $('#mgw').text('')
+                $('#log').text("Already viewing 'CAM 1'");
+            } else if (playMusic === 1 && cameraTracker !== 1) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('bedroomCheer1')
-                $('#mgw').text("You give me what I want and I'll behave..")
+                $('#log').text("CURRENT DIRECTORY: BEDROOM: 'CHEER' ALERT: Sensor triggered in the 'LAB ROOM'");
+                $('#mgw').text("You give me what I want and I'll behave.. ")
                     .css({
                         "font-family": "'Gochi Hand', cursive",
                         "font-size": "100px",
@@ -133,32 +175,64 @@ function clearOnReturn(event) {
                         "padding-top": "125px",
                         "height": "375px"
                     })
-            } else if (playMusic === 1 && cam1Count > 5) {
+            } else if (playMusic === 1) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('bedroomCheer1')
-                $('#mgw').text("This is my room! Isn't it pretty?")
-                    .css({
-                        "font-family": "'Gochi Hand', cursive",
-                        "font-size": "80px",
-                        "color": "red",
-                        "text-align": "center",
-                        "padding-top": "125px",
-                        "height": "375px"
-                    })
+                $('#mgw').text("You give me what I want and I'll behave..")
+                $('#log').text("Already viewing 'CAM 1'");
             }
 
         } else if (x === '.cam2') {
-            cam2Count++
-            power -= 1;
-            $('div#mgw').removeClass()
-            $('div#mgw').addClass('bathroom1')
-            $('#mgw').text('')
-            $('#log').text("CURRENT DIRECTORY: BATHROOM 1");
+            if (cameraTracker !== 2) {
+                setTimeout(tracker2, 500)
+
+                function tracker2() {
+                    cameraTracker = 2;
+                }
+                cam2Count++
+                power -= 1;
+            }
+            if (cam2Count <= 1 && cam2Count !== 2 && cam2Count !== 4 && finalChecker === 0) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('bathroom1')
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: BATHROOM 1");
+            } else if (finalChecker === 0 && (cam2Count === 2 || cam4Count === 4)) {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: BATHROOM 1");
+                $('div#mgw').addClass('eye')
+                setTimeout(resetCam2, 700)
+
+                function resetCam2() {
+                    $('div#mgw').removeClass()
+                    $('#mgw').addClass('noSource')
+                    $('#mgw').text('')
+                    $('#log').text("CURRENT DIRECTORY: BATHROOM 1")
+                    setTimeout(resetCam2_1, 500)
+
+                    function resetCam2_1() {
+                        $('#mgw').addClass('bathroom1')
+                    }
+                }
+            } else if (finalChecker === 1) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('bathroom1')
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: BATHROOM 1");
+            }
 
         } else if (x === '.cam3') {
             // $('#pt').off('keydown', clearOnReturn)
-            cam3Count++
-            power -= 1;
+            if (cameraTracker !== 3) {
+                setTimeout(tracker3, 500)
+
+                function tracker3() {
+                    cameraTracker = 3;
+                }
+                cam3Count++
+                power -= 1;
+            }
             if (cam3Count !== 2 && cam3Count !== 4) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('bedroomChance1')
@@ -172,8 +246,8 @@ function clearOnReturn(event) {
             } else if (cam3Count === 2) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('bedroomChance1')
-                $('#mgw').text("You are not alone..")
                 $('#log').text("CURRENT DIRECTORY: BEDROOM: 'CHANCE'")
+                $('#mgw').text("You are not alone..")
                     .css({
                         "font-family": "'Gochi Hand', cursive",
                         "font-size": "100px",
@@ -196,76 +270,160 @@ function clearOnReturn(event) {
                         "padding-top": "75px",
                         "height": "425px"
                     })
+            }
 
 
-            } else if (x === '.cam4') {
+        } else if (x === '.cam4') {
+            if (cameraTracker !== 4) {
+                setTimeout(tracker4, 500)
+
+                function tracker4() {
+                    cameraTracker = 4;
+                }
                 cam4Count++
                 power -= 1;
-                if (cam4Count === 1) {
-                    $('div#mgw').removeClass()
-                    $('div#mgw').addClass('bedroomChange1')
-                    $('#mgw').text('')
-                    $('#log').text("CURRENT DIRECTORY: BEDROOM: 'CHANGE'")
-                    // $('#pt').off('keydown', clearOnReturn)
-                    //
-                    // $('#pt').on("keydown", message2)
+            }
+            if (cam4Count === 1) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('bedroomChange1')
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: BEDROOM: 'CHANGE'")
+                // $('#pt').off('keydown', clearOnReturn)
+                //
+                // $('#pt').on("keydown", message2)
 
-                } else {
-                    $('div#mgw').removeClass()
-                    $('div#mgw').addClass('bedroomChange1')
-                    $('#mgw').text("The old man loved his daughter. So I took her from him..Her name was Delilah")
-                        .css({
-                            "font-family": "'Gochi Hand', cursive",
-                            "font-size": "35px",
-                            "color": "red",
-                            "text-align": "center",
-                            "padding-top": "125px",
-                            "height": "375px"
-                        });
+            } else {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('bedroomChange1')
+                $('#mgw').text("The old man loved his daughter. So I took her from him..Her name was Delilah")
+                    .css({
+                        "font-family": "'Gochi Hand', cursive",
+                        "font-size": "35px",
+                        "color": "red",
+                        "text-align": "center",
+                        "padding-top": "125px",
+                        "height": "375px"
+                    });
+            }
+
+
+        } else if (x === '.cam5') {
+            if (cameraTracker !== 5) {
+                setTimeout(tracker5, 500)
+
+                function tracker5() {
+                    cameraTracker = 5;
                 }
-
-
-            } else if (x === '.cam5') {
                 cam5Count++
                 power -= 1;
+            }
+            if (finalChecker === 0) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('noSource')
                 $('#mgw').text('')
                 $('#log').text("CURRENT DIRECTORY: BATHROOM 2");
+            } else if (finalChecker === 1) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('bathroom2')
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: BATHROOM 2");
+            }
 
-            } else if (x === '.cam6') {
+        } else if (x === '.cam6') {
+            if (cameraTracker !== 6) {
+                setTimeout(tracker6, 500)
+
+                function tracker6() {
+                    cameraTracker = 6;
+                }
                 cam6Count++
                 power -= 1;
-                if (playMusic === 0) {
-                    $('div#mgw').removeClass()
-                    $('div#mgw').addClass('lab1')
-                    $('#mgw').text('')
-                    $('#log').text("CURRENT DIRECTORY: LAB ROOM");
-                }
-            } else if (playMusic === 1 && cam6Count >= 4) {
+            }
+            if (playMusic === 0) {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('lab1')
                 $('#mgw').text('')
-                $('#log').text("CURRENT DIRECTORY: LAB ROOM")
+                $('#log').text("CURRENT DIRECTORY: LAB ROOM");
+            } else if (playMusic === 1 && cam6Count <= 1) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('lab1')
+                $('#mgw').text('')
+                $('#log').text("CURRENT DIRECTORY: LAB ROOM");
+            } else if (playMusic === 1 && cam6Count > 1) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('lab1')
+                $('#mgw').text("The doctor always knew how to make me feel better. He loved me very much. I miss him very much. Where is he? You're not him.")
+                    .css({
+                        "font-family": "'Gochi Hand', cursive",
+                        "font-size": "35px",
+                        "color": "red",
+                        "text-align": "center",
+                        "padding-top": "125px",
+                        "height": "375px"
+                    });
+                $('#log').text("CURRENT DIRECTORY: LAB ROOM --ALERT: Camera 7 is now online..")
+                labTracker = 1;
+            }
+        } else if (playMusic === 1 && cam6Count >= 4) {
+            $('div#mgw').removeClass()
+            $('div#mgw').addClass('lab1')
+            $('#mgw').text('')
+            $('#log').text("CURRENT DIRECTORY: LAB ROOM")
+        } else if (x === '.cam7') {
+            if (cameraTracker !== 7) {
+                setTimeout(tracker7, 500)
+
+                function tracker7() {
+                    cameraTracker = 7;
+                }
+                cam7Count++
+                power -= 1;
+            }
+            if (labTracker === 0) {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('div#mgw').addClass('noSource')
+                $('#log').text("CURRENT DIRECTORY: HALLWAY ONE");
+            } else if (labTracker === 1) {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('div#mgw').addClass('hw1')
+                $('#log').text("CURRENT DIRECTORY: HALLWAY ONE --SYSTEM UPDATE: Electrifier is now online and ready for action.");
+                electrifier = 1;
             }
 
-        } else if (x === '.cam7') {
-            cam7Count++
-            power -= 1;
-            $('div#mgw').removeClass()
-            $('#mgw').text('')
-            $('div#mgw').addClass('noSource')
-            $('#log').text("CURRENT DIRECTORY: HALLWAY ONE");
-
         } else if (x === '.cam8') {
-            cam8Count++;
-            power -= 1;
-            $('div#mgw').removeClass()
-            $('#mgw').text('')
-            $('div#mgw').addClass('noSource')
-            $('#log').text("CURRENT DIRECTORY: HALLWAY TWO");
+            if (cameraTracker !== 8) {
+                setTimeout(tracker8, 500)
+
+                function tracker8() {
+                    cameraTracker = 8;
+                }
+                cam8Count++
+                power -= 1;
+            }
+            if (finalChecker === 0) {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('div#mgw').addClass('noSource')
+                $('#log').text("CURRENT DIRECTORY: HALLWAY TWO");
+            } else if (finalChecker === 1) {
+                $('div#mgw').removeClass()
+                $('#mgw').text('THANK YOU. I AM GOING TO HIM')
+                    .css({
+                        "font-family": "'Gochi Hand', cursive",
+                        "font-size": "100px",
+                        "color": "red",
+                        "text-align": "center",
+                        "padding-top": "125px",
+                        "height": "375px"
+                    });
+                $('div#mgw').addClass('hw2')
+                $('#log').text("CURRENT DIRECTORY: HALLWAY TWO")
+            }
 
         } else if (x === '.close') {
+            cameraTracker = 'off'
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
             $('#mgw').text('')
@@ -277,6 +435,7 @@ function clearOnReturn(event) {
 
             }
         } else if (x === '.open') {
+            cameraTracker = 'off'
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
             $('#mgw').text('')
@@ -286,47 +445,97 @@ function clearOnReturn(event) {
                 if (playMusic === 0) {
                     $('div#mgw').removeClass()
                     $('div#mgw').addClass('gameOver')
+                    $('#mgw').text('')
                     $('#log').text("As you run out of the control room, an unknown woman grabs you from the dark and slits your throat.. The last words you hear are her shrills 'I ONLY WANTED TO BE FRIENDS'")
+                    $('#pt').off('keydown', clearOnReturn)
 
-                } else if (playMusic === 1) {
+                } else if (playMusic === 1 && finalChecker === 0) {
+                    $('div#mgw').removeClass()
+                    $('div#mgw').addClass('gameOver')
+                    $('#mgw').text('')
+                    $('#log').text("As you slowly walk out of the control room, a woman from the dark appears smiling. 'I'll never let you leave!' She then grabs you by the throat and thrusts a knife into your brain. >_<")
+                    $('#pt').off('keydown', clearOnReturn)
+
+                } else if (playMusic === 1 && finalChecker === 1) {
+                    $('#mgw').text('')
                     $('#log').text("Doors are now open.")
                     alert("YOU ESCAPED!")
+                    setTimeout(youWin, 1000)
+
+                    function youWin() {
+                        $('#mgw').removeClass()
+                        $('#mgw').addClass('winScreen')
+                        $('#mgw').text('')
+                        $('#log').text('Congrats you won! Now run for your life and never speak of what has happened here tonight..')
+                        $('#pt').off('keydown', clearOnReturn)
+                        var audio = $('#audioMain')
+                        var source = $('#audioSource')
+                        source.attr('src', 'win.mp3')
+                        audio[0].pause()
+                        audio[0].load()
+                        audio[0].play()
+                        setTimeout(stopPlay, 3000)
+
+                        function stopPlay() {
+                            audio[0].pause()
+                        }
+                    }
                 }
             }
 
         } else if (x === '.lock') {
-            $('div#mgw').removeClass()
-            $('#mgw').text('')
-            $('div#mgw').addClass('homescreen')
-            $('#log').text("Doors are already locked.");
+            cameraTracker = 'off'
+            if (lock === 'on') {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('div#mgw').addClass('homescreen')
+                $('#log').text("Doors are already locked.");
+            } else if (lock === 'off') {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('div#mgw').addClass('homescreen')
+                $('#log').text("Locking the main control room doors..")
+                lock = 'on'
+            }
 
         } else if (x === '.unlock') {
+            cameraTracker = 'off'
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
             $('#mgw').text('')
             if (user === 'guest') {
                 $('#log').text("Must be signed in as admin to unlock or lock doors. Use .login to sign in as user admin.")
-            } else if (user === 'admin') {
+            } else if (user === 'admin' && lock === 'on') {
                 $('#log').text("Doors unlocked!");
                 lock = 'off';
+            } else if (user === 'admin' && lock === 'off') {
+                $('#log').text("Doors are currently unlocked. Use .open to open the control room doors.")
             }
         } else if (x === '.music') {
+            cameraTracker = 'off'
             if (user === 'admin') {
+                power -= 10;
+                playMusic = 1;
+                var source = $('#audioSource')
+                var audio = $('#audioMain')
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('homescreen')
                 $('#mgw').text('')
-                $('#log').text('Music turned on. This should calm her down..')
-                $('source').src = 'song.mp3'
-                $('audio').play
+                $('#log').text('Music turned on. This should calm her down.. ALERT: Camera 1 is now online..')
+                source.attr('src', 'song.mp3')
+                // audio.load()
+                audio[0].pause()
+                audio[0].load()
+                audio[0].play()
                 //need to add a timed function by which the original audio plays after the song is finished.
-                setTimeout(restoreAudio, 20000)
+                setTimeout(restoreAudio, 36000)
 
                 function restoreAudio() {
-                    $('source').src = 'audio.mp3'
-                    $('audio').play
+                    source.attr('src', 'audio.mp3')
+                    audio[0].pause()
+                    audio[0].load()
+                    audio[0].play()
                 }
-                power -= 10;
-                playMusic = 1;
             } else if (user === 'guest') {
                 $('div#mgw').removeClass()
                 $('div#mgw').addClass('homescreen')
@@ -334,6 +543,7 @@ function clearOnReturn(event) {
                 $('#log').text('Only admin user may access music!')
             }
         } else if (x === '.login') {
+            cameraTracker = 'off'
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
             $('#mgw').text('')
@@ -385,20 +595,86 @@ function clearOnReturn(event) {
             //   })
             // }
         } else if (x === '.devNotes') {
+            cameraTracker = 'off'
             $('#mgw').text('')
             $('#mgw').removeClass()
             $('#mgw').addClass('homescreen')
-            $('#log').text("Developer Notes (Last log: Saturday, July 9th, 2014): 1. Fix the locking system for bedrooms and lab. Remember to get soundproof walls for the lab room. The neighbors have started to become concerned with the constant screaming.. 2. Add a command for the electrifier that can be controlled from the control room. The music is not enough to get Elaine to quiet down anymore..")
+            $('#log').text("Developer Notes (Last log: Saturday, July 9th, 2014): 1. Fix the locking system for bedrooms and lab. Remember to get soundproof walls for the lab room. The neighbors have started to become concerned with the constant screaming.. 2. Fix the command for the electrifier that can be controlled from the control room. The music is not enough to get Elaine to quiet down anymore..")
 
-        } else if (x === '.esc') {
+        } else if (x === '.electrifier') {
+            cameraTracker = 'off'
+            if (electrifier === 0) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('homescreen')
+                $('#mgw').text('')
+                $('#log').text('Electrifier is currently offline. Require certain sources to be plugged in before electrifier is up and running.')
+            } else if (electrifier === 1 && power < 25) {
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('homescreen')
+                $('#mgw').text('')
+                $('#log').text('Not enough power to run the Electifier. System requires at least 25% of battery life to run the Electrifier.')
+            } else if (electrifier === 1 && power > 25) {
+                power -= 15;
+                $('div#mgw').removeClass()
+                $('div#mgw').addClass('homescreen')
+                $('#mgw').text('')
+                $('#log').text('Preparing to run the Electrifier. Checking to see if main doors are closed... Standby...')
+                setTimeout(nextMessage, 3000)
+                setTimeout(finalMessage, 12000)
+                //she dies
+                function nextMessage() {
+                    $('#log').text('Running the Electrifier.. All rooms and hallways except the control room are being zapped')
+                    var source = $('#audioSource')
+                    var audio = $('#audioMain')
+                    source.attr('src', 'dies.mp3')
+                    audio[0].pause()
+                    audio[0].load()
+                    audio[0].play()
+                    setTimeout(resetSound, 6100)
+
+                    function resetSound() {
+                        source.attr('src', 'audio.mp3')
+                        audio[0].pause()
+                    }
+                }
+
+                function finalMessage() {
+                    $('#log').text("Electrifier now turned off. ALERT: Cameras 5 and 8 firing up.. All Cameras are now online")
+                    finalChecker = 1;
+                }
+            }
+        } else if (x === '.reboot') {
+            cameraTracker = 'off'
             $('div#mgw').removeClass()
             $('div#mgw').addClass('homescreen')
+            $('#mgw').text('')
+            $('#log').text("System shutting down...");
+            setTimeout(systemShutDown, 5000)
+
+            function systemShutDown() {
+                $('div#mgw').removeClass()
+                $('#mgw').text('')
+                $('#log').text('')
+                $('#log, #mgw').css("background-color", "black")
+                setTimeout(powerToZero, 3000)
+
+                function powerToZero() {
+                    power = 0;
+                }
+            }
+        } else if (x === '.esc') {
+            cameraTracker = 'off'
+            $('div#mgw').removeClass()
+            $('div#mgw').addClass('homescreen')
+            $('#mgw').text('')
             $('#log').text("Welcome to Beacon Mental Asylum! You are in the main control room's accessing terminal. Have a wonderful evening!" + '\n' + "Type .help in the command line if you need guidance on using the terminal.");
 
             return;
         }
+        whiteNoise();
     }
 }
+
 
 
 
@@ -464,6 +740,7 @@ function powerZero() {
         power = 0;
         $('#log').text('You are out of battery.. Panicking, you try to force the doors open but the doors refuse to budge. You realize your doom when you pull out your phone and have 0 bars. Curses, Sprint! You are trapped to rot in the asylum indefinitely.. ')
         $('#power').text('')
+        $('#mgw').text('')
         $('#mgw').removeClass()
         $('#mgw').addClass('gameOver')
         $('#log').css({
@@ -473,8 +750,53 @@ function powerZero() {
         //     "background-color": "black"
         // })
         //turn all eventlisteners off(*HOW?*)
+        $('#pt').off('keydown', clearOnReturn)
     }
 }
+
+function eyeCamera() {
+    $('div#mgw').removeClass()
+    $('#mgw').text('')
+    $('#log').text("CURRENT DIRECTORY: BATHROOM 1");
+    $('div#mgw').addClass('eye')
+    setTimeout(resetCam2, 700)
+
+    function resetCam2() {
+        $('div#mgw').removeClass()
+        $('#mgw').addClass('noSource')
+        $('#mgw').text('')
+        $('#log').text("CURRENT DIRECTORY: BATHROOM 1")
+    }
+    setTimeout(resetCam2_1, 500)
+
+    function resetCam2_1(cameraNumber) {
+        for (i = 0; i < cameraNumber.length; i++) {
+            $('#mgw').addClass(cameraNumber[i])
+        }
+    }
+}
+
+
+var cameraNumber = [];
+
+function whiteNoise() {
+    var audio = $('#audioMain')
+    var source = $('#audioSource')
+    if ($('#mgw').attr('class') === 'noSource' && source.attr('src') !== 'song.mp3') {
+        source.attr('src', 'whitenoise.mp3')
+        audio[0].pause()
+        audio[0].load()
+        audio[0].play()
+    } else if (source.attr('src') === 'audio.mp3' && source.attr('src') !== 'song.mp3' ) {
+        return;
+    } else if ($('#mgw').attr('class') !== 'noSource' && source.attr('src') !== 'song.mp3') {
+        source.attr('src', 'audio.mp3')
+        audio[0].pause()
+        audio[0].load()
+        audio[0].play();
+    } else {return}
+}
+
 
 
 

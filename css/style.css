@@ -122,3 +122,38 @@ body {
   background-position: center;
   background-size: cover;
 }
+
+.hw1 {
+  background-image: url(../images/hw1.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.hw2 {
+  background-image: url(../images/hw2.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bathroom2 {
+  background-image: url(../images/bathroom2.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.winScreen {
+  background-image: url(../images/youwin.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.eye {
+  background-image: url(../images/Eye.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
