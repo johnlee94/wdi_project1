@@ -2,9 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <audio id="audioMain" autoplay loop controls>
-      <source id='audioSource' src='audio.mp3' type='audio/mpeg'>
-    </audio>
+
 
     <script
   src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -13,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Just+Another+Hand" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Gochi+Hand" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Gochi+Hand" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Galindo" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" type="text/css">
 
 
@@ -26,7 +25,8 @@
 
   <body>
 
-    <h1 id="mainheader">GAME NAME</h1>
+    <h1 id="mainheader">A Night at Beacon's</h1>
+    <hr>
 
     <br>
 
@@ -44,6 +44,16 @@
       <!-- reloads page when submitted... -->
 
       <textarea name="console" id="pt" cols="30" rows="1"></textarea>
+
+      <button id='resetButton'>RESET</button>
+
+      <audio autoplay loop id="audioOne">
+        <source id='audioMainFile' src='audio/audio.mp3' type='audio/mpeg'>
+      </audio>
+
+      <audio autoplay id="audioMain">
+        <source id='audioSourceMain' src='' type='audio/mpeg'>
+      </audio>
 
 
   <script src="js/app.js"></script>
